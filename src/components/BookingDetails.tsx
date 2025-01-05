@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 const BookingDetails = () => {
@@ -13,7 +13,8 @@ const BookingDetails = () => {
     fetchBookingDetails();
   }, []);
 
-  const fetchBookingDetails = async () => {
+  // useCallback used for memoization of the following function
+  const fetchBookingDetails = useCallback(async () => {
     try {
       const id = searchParams.get("id");
       const response = await axios.get(
@@ -24,7 +25,7 @@ const BookingDetails = () => {
     } catch (error) {
       console.error("Error :", error);
     }
-  };
+  }, [searchParams]);
 
   const cancelBooking = async () => {
     try {
