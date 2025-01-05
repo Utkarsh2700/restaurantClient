@@ -21,14 +21,14 @@ const BookingDetails = () => {
       );
       //   console.log("response.data", response.data.booking);
       setBookingSummary(response.data.booking);
-    } catch (error: any) {
-      console.error("Error :", error.message);
+    } catch (error) {
+      console.error("Error :", error);
     }
   };
 
   const cancelBooking = async () => {
     try {
-      const response = await axios.delete(
+      await axios.delete(
         `${process.env.NEXT_PUBLIC_URL}/delete-booking/${bookingSummary?._id}`
       );
       toast.success(
@@ -36,7 +36,7 @@ const BookingDetails = () => {
       );
       router.push("/");
     } catch (error) {
-      console.error("Error while cancelling booking");
+      console.error("Error while cancelling booking", error);
     }
   };
   return (

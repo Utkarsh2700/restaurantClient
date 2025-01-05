@@ -2,12 +2,20 @@
 import axios from "axios";
 // import { useRouter, redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
+interface FormData {
+  date: string;
+  time: string;
+  guests: number;
+  name: string;
+  contact: string;
+}
+
 export default function Home() {
-  const { register, handleSubmit, watch, reset, getValues } = useForm();
+  const { register, handleSubmit, reset } = useForm<FormData>();
   const [availableSlots, setAvailableSlots] = useState([
     "12:00",
     "13:00",
@@ -25,7 +33,7 @@ export default function Home() {
 
   const router = useRouter();
 
-  const fetchAvailability = async (data: any) => {
+  const fetchAvailability = async (data: { date: string; time: string }) => {
     // console.log("data", data);
     const { time, date } = data;
     try {
@@ -40,11 +48,17 @@ export default function Home() {
       } else if (time) {
         toast.error(`The selected time slot (${time}) is already booked.`);
       }
-    } catch (error: any) {
-      console.error("Error fetchAvailability availabilty: ", error.message);
+    } catch (error) {
+      console.error("Error fetchAvailability availabilty: ", error);
     }
   };
-  const submitBooking = async (data: any) => {
+  const submitBooking = async (data: {
+    date: string;
+    time: string;
+    guests: number;
+    name: string;
+    contact: string;
+  }) => {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_URL}/create-booking`,
@@ -56,8 +70,8 @@ export default function Home() {
       );
       reset();
       router.push(`/confirmation?id=${response.data._id}`);
-    } catch (error: any) {
-      console.error("Error fetching availabilty: ", error.message);
+    } catch (error) {
+      console.error("Error fetching availabilty: ", error);
     }
   };
   return (
@@ -80,7 +94,10 @@ export default function Home() {
                 id="date"
                 {...register("date", { required: true })}
                 onChange={(e) => {
-                  fetchAvailability({ date: e.target.value });
+                  fetchAvailability({
+                    date: e.target.value,
+                    time: "",
+                  });
                 }}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Date"
@@ -105,18 +122,6 @@ export default function Home() {
                 ))}
               </select>
             </div>
-            {/* <div>
-              <label htmlFor="time" className="sr-only">
-                Time
-              </label>
-              <input
-                type="time"
-                id="time"
-                {...register("time", { required: true })}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Time"
-              />
-            </div> */}
             <div>
               <label htmlFor="guests" className="sr-only">
                 Guests

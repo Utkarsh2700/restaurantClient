@@ -1,10 +1,6 @@
 import BookingDetails from "@/components/BookingDetails";
 
-export default function ConfirmationPage({
-  bookingSummary,
-}: {
-  bookingSummary: BookingSummary;
-}) {
+export default function ConfirmationPage() {
   return (
     <>
       <BookingDetails />
